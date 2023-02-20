@@ -3,23 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IKitchenObjectParent
 {
     public static Player Instance { get; private set; }
 
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
+
     public class OnSelectedCounterChangedEventArgs : EventArgs
     {
         public ClearCounter selectedCounter;
     }
 
-    [SerializeField] private LayerMask countersLayerMask;
+    [SerializeField] private GameObject kitchenObjectHoldPoint;
     [SerializeField] private GameInput gameInput;
+    [SerializeField] private LayerMask countersLayerMask;
     [SerializeField] private float moveSpeed;
     [SerializeField] private float rotateSpeed;
 
-    private Vector3 lastInteractDir;
     private ClearCounter selectedCounter;
+    private KitchenObject kitchenObject;
+    private Vector3 lastInteractDir;
     private bool isWalking;
 
     private void Awake()
@@ -46,9 +49,49 @@ public class Player : MonoBehaviour
         HandleInteractions();
     }
 
+    public GameObject GetKitchenObjectFollowGameObject()
+    {
+        return kitchenObjectHoldPoint;
+    }
+    public KitchenObject GetKitchenObject()
+    {
+        return kitchenObject;
+    }
+
+    public bool HasKitchenObject()
+    {
+        return kitchenObject != null;
+    }
+
     public bool IsWalking()
     {
         return isWalking;
+    }
+
+    public void SetKitchenObject(KitchenObject kitchenObject)
+    {
+        this.kitchenObject = kitchenObject;
+    }
+
+    public void ClearKitchenObject()
+    {
+        kitchenObject = null;
+    }
+
+    private void OnInteractAction(object sender, EventArgs e)
+    {
+        if (selectedCounter != null)
+            selectedCounter.Interact(this);
+    }
+
+    private void SetSelectedCounter(ClearCounter selectedCounter)
+    {
+        this.selectedCounter = selectedCounter;
+
+        OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterChangedEventArgs
+        {
+            selectedCounter = selectedCounter
+        });
     }
 
     private void HandleMovement()
@@ -121,21 +164,5 @@ public class Player : MonoBehaviour
         }
         else
             SetSelectedCounter(null);
-    }
-
-    private void OnInteractAction(object sender, EventArgs e)
-    {
-        if (selectedCounter != null)
-            selectedCounter.Interact();
-    }
-
-    private void SetSelectedCounter(ClearCounter selectedCounter)
-    {
-        this.selectedCounter = selectedCounter;
-
-        OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterChangedEventArgs
-        {
-            selectedCounter = selectedCounter
-        });
     }
 }
