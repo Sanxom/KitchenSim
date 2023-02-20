@@ -2,26 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ClearCounter : MonoBehaviour, IKitchenObjectParent
+public class BaseCounter : MonoBehaviour, IKitchenObjectParent
 {
-    [SerializeField] private KitchenObjectSO kitchenObjectSO;
     [SerializeField] private GameObject counterTopPoint;
 
     private KitchenObject kitchenObject;
 
-    public void Interact(Player player)
+    public virtual void Interact(Player player)
     {
-        if (kitchenObject == null)
-        {
-            // Give the object to the counter(place on top)
-            GameObject kitchenObjectGO = Instantiate(kitchenObjectSO.prefab, counterTopPoint.transform);
-            kitchenObjectGO.GetComponent<KitchenObject>().SetKitchenObjectParent(this);
-        }
-        else
-        {
-            // Give the object to the player
-            kitchenObject.SetKitchenObjectParent(player);
-        }
+        Debug.LogError("BaseCounter.Interact();");
+    }
+
+    public virtual void InteractAlternate(Player player)
+    {
+        Debug.LogError("BaseCounter.InteractAlternate();");
     }
 
     public GameObject GetKitchenObjectFollowGameObject()

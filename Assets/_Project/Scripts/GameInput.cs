@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 public class GameInput : MonoBehaviour
 {
     public event EventHandler OnInteractAction;
+    public event EventHandler OnInteractAlternateAction;
 
     private PlayerInputActions playerInputActions;
 
@@ -16,11 +17,13 @@ public class GameInput : MonoBehaviour
         playerInputActions.Player.Enable();
 
         playerInputActions.Player.Interact.performed += InteractPerformed;
+        playerInputActions.Player.InteractAlternate.performed += InteractAlternatePerformed;
     }
 
-    private void OnDisable()
+    private void OnApplicationQuit()
     {
         playerInputActions.Player.Interact.performed -= InteractPerformed;
+        playerInputActions.Player.InteractAlternate.performed -= InteractAlternatePerformed;
     }
 
     public Vector2 GetMovementVectorNormalized()
@@ -32,5 +35,10 @@ public class GameInput : MonoBehaviour
     private void InteractPerformed(InputAction.CallbackContext context)
     {
         OnInteractAction?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void InteractAlternatePerformed(InputAction.CallbackContext context)
+    {
+        OnInteractAlternateAction?.Invoke(this, EventArgs.Empty);
     }
 }
