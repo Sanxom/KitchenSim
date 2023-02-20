@@ -26,12 +26,11 @@ public class CuttingCounter : BaseCounter
                 // Player carrying something
                 if (HasRecipeWithInput(player.GetKitchenObject().GetKitchenObjectSO()))
                 {
-                    // Player carrying something that can be cut
+                    // Player carrying something that can be cut, we set it on counter and reset cuttingProgress
                     player.GetKitchenObject().SetKitchenObjectParent(this);
                     cuttingProgress = 0;
 
                     CuttingRecipeSO cuttingRecipeSO = GetCuttingRecipeSOWithInput(GetKitchenObject().GetKitchenObjectSO());
-
                     OnProgressChanged?.Invoke(this, new OnProgressChangedEventArgs
                     {
                         progressNormalized = (float)cuttingProgress / cuttingRecipeSO.cuttingProgressMax
@@ -53,7 +52,23 @@ public class CuttingCounter : BaseCounter
             else
             {
                 // Player not carrying anything
-                GetKitchenObject().SetKitchenObjectParent(player);
+                if (HasRecipeWithInput(GetKitchenObject().GetKitchenObjectSO()))
+                {
+                    // There is a KitchenObject that can be cut here, we reset cuttingProgress
+                    cuttingProgress = 0;
+                    CuttingRecipeSO cuttingRecipeSO = GetCuttingRecipeSOWithInput(GetKitchenObject().GetKitchenObjectSO());
+                    OnProgressChanged?.Invoke(this, new OnProgressChangedEventArgs
+                    {
+                        progressNormalized = (float)cuttingProgress / cuttingRecipeSO.cuttingProgressMax
+                    });
+
+                    GetKitchenObject().SetKitchenObjectParent(player);
+                }
+                else
+                {
+                    // There is a KitchenObject that can not be cut here, we pick it up
+                    GetKitchenObject().SetKitchenObjectParent(player);
+                }
             }
         }
     }
