@@ -14,7 +14,7 @@ public class GameOverUI : MonoBehaviour
         Hide();
     }
 
-    private void OnApplicationQuit()
+    private void OnDestroy()
     {
         GameManager.instance.OnStateChanged -= OnStateChanged;
     }

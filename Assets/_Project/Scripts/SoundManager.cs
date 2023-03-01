@@ -31,7 +31,7 @@ public class SoundManager : MonoBehaviour
         TrashCounter.OnAnyObjectTrashed += OnAnyObjectTrashed;
     }
 
-    private void OnApplicationQuit()
+    private void OnDestroy()
     {
         DeliveryManager.instance.OnRecipeSuccess -= OnRecipeSuccess;
         DeliveryManager.instance.OnRecipeFailed -= OnRecipeFailed;
@@ -49,6 +49,16 @@ public class SoundManager : MonoBehaviour
     public void PlayFootstepSound(Vector3 position)
     {
         PlaySound(audioClipRefsSO.footstepSounds, position);
+    }
+
+    public void PlayCountdownSound()
+    {
+        PlaySound(audioClipRefsSO.warningSounds[1], Vector3.zero);
+    }
+
+    public void PlayWarningSound(Vector3 position)
+    {
+        PlaySound(audioClipRefsSO.warningSounds, position);
     }
 
     public void IncreaseVolume()
